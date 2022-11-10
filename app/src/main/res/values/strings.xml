@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">SSMDataPersist</string>
+    <string-array name="persist_flag">
+        <item>false</item>
+        <item>true</item>
+    </string-array>
+</resources>
