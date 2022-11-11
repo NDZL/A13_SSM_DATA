@@ -4,10 +4,13 @@ import android.annotation.SuppressLint;
 import android.content.ContentProviderClient;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -73,7 +76,7 @@ public class SSMDataProcessor extends AppCompatActivity {
         myContentObserver = new LocalContentObserver(null);
         myDataSetObserver = new LocalDataSetObserver();
 
-        resultView.setText("SSM contains "+ ssm_notpersisted_countRecords()+ " not persisted records\nand "+ssm_ispersisted_countRecords()+" persisted records from this app");
+        resultView.setText("SSM contains "+ ssm_notpersisted_countRecords()+ " not persisted records\nand "+ssm_ispersisted_countRecords()+" persisted records from this app\n"+getAndroidAPI()+"\n"+getTargetSDK());
     }
 
     private void initializePersistFlagSpinner() {
@@ -190,7 +193,7 @@ public class SSMDataProcessor extends AppCompatActivity {
         totalTimesec = (1. * timeEnd - 1. * timeBegin) / 1000.0;
 
         //Toast.makeText(mContext, "New Record Inserted", Toast.LENGTH_SHORT).show();
-        resultView.setText("Inserted:"+insert_success_count+" records. Failed to insert:"+ insert_error_count+" records in "+totalTimesec+"s\n"+  "SSM status: "+ ssm_notpersisted_countRecords() +" non-persisted records\n "+ssm_ispersisted_countRecords()+" persisted records");
+        resultView.setText("Inserted:"+insert_success_count+" records. Failed to insert:"+ insert_error_count+" records in "+totalTimesec+"s\n"+  "SSM status: "+ ssm_notpersisted_countRecords() +" non-persisted records\n "+ssm_ispersisted_countRecords()+" persisted records\n"+getAndroidAPI()+"\n"+getTargetSDK());
     }
 
 
@@ -288,20 +291,29 @@ public class SSMDataProcessor extends AppCompatActivity {
 
 
     public void onClickDeleteAllData(View view) {
+        int rc_np=0;
+        int rc_ip=0;
+        int recno=0;
         try {
             Uri cpUriDelete = Uri.parse(AUTHORITY + "/[" + mContext.getPackageName() + "]");
 
             String whereClauseNotPersisted = COLUMN_TARGET_APP_PACKAGE + " = '" + mContext.getPackageName() + "'" + " AND " + COLUMN_DATA_PERSIST_REQUIRED + " = 'false'";
-            String whereClauseIsPersisted = COLUMN_TARGET_APP_PACKAGE + " = '" + mContext.getPackageName() + "'" + " AND " + COLUMN_DATA_PERSIST_REQUIRED + " = 'false'";
+            String whereClauseIsPersisted = COLUMN_TARGET_APP_PACKAGE + " = '" + mContext.getPackageName() + "'" + " AND " + COLUMN_DATA_PERSIST_REQUIRED + " = 'true'";
+
             timeBegin= System.currentTimeMillis();
-            int rc_np = getContentResolver().delete(cpUriDelete, whereClauseNotPersisted, null);
-            int rc_ip = getContentResolver().delete(cpUriDelete, whereClauseIsPersisted, null);
-            long timeEnd = System.currentTimeMillis();
-            totalTimesec = (1. * timeEnd - 1. * timeBegin) / 1000.0;
-            resultView.setText("Deleted: "+rc_np+" non-persisted records\nDeleted: "+rc_ip+" persisted records");
+
+            ////NDZL - WHERE CLAUSES not always working (on old records mainly)
+            rc_np = getContentResolver().delete(cpUriDelete, whereClauseNotPersisted, null);
+            rc_ip = getContentResolver().delete(cpUriDelete, whereClauseIsPersisted, null);
+            recno = getContentResolver().delete(cpUriDelete, null, null); //VIP, THIS FORCE UNLOCKS SSM!
+
         } catch (Exception e) {
             Log.d(TAG, "Delete - error: " + e.getMessage());
         }
+        long timeEnd = System.currentTimeMillis();
+        totalTimesec = (1. * timeEnd - 1. * timeBegin) / 1000.0;
+        resultView.setText("Deleted: "+ (rc_np+rc_ip+recno)+" records");
+
     }
 
     @Override
@@ -314,6 +326,24 @@ public class SSMDataProcessor extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         getContentResolver().unregisterContentObserver(myContentObserver);
+    }
+
+    String getTargetSDK(){
+        int version = 0;
+        PackageManager pm = getPackageManager();
+        ApplicationInfo applicationInfo = null;
+        try {
+            applicationInfo = pm.getApplicationInfo(mContext.getPackageName() , 0);
+        } catch (PackageManager.NameNotFoundException e) {}
+        if (applicationInfo != null) {
+            version = applicationInfo.targetSdkVersion;
+        }
+        return  "TARGET API:"+version;
+    }
+
+    String getAndroidAPI(){
+        String _sb_who =  Build.MANUFACTURER+","+ Build.MODEL+","+ Build.DISPLAY+", API:"+ android.os.Build.VERSION.SDK_INT;
+        return  _sb_who;
     }
 }
 

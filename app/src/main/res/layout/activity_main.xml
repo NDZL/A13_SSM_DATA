@@ -13,7 +13,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SSM Data Solution"
+            android:text="SSM Data Solution {NDZL} v1.0"
             android:layout_gravity="center"
             android:textSize="14sp"
             android:padding="3dp"/>
@@ -102,7 +102,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="onClickDeleteAllData"
-                android:text="Delete Data"
+                android:text="CLEAR SSM"
                 android:layout_marginLeft="3dp"
                 android:layout_marginRight="3dp"
                 android:layout_weight="0.5"/>
