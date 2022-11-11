@@ -4,4 +4,16 @@
         <item>false</item>
         <item>true</item>
     </string-array>
+    <string-array name="howmanyrec_flag">
+        <item>10</item>
+        <item>100</item>
+        <item>1000</item>
+        <item>10000</item>
+    </string-array>
+    <string-array name="seeds">
+        <item>3003</item>
+        <item>4004</item>
+        <item>5005</item>
+        <item>Random</item>
+    </string-array>
 </resources>
