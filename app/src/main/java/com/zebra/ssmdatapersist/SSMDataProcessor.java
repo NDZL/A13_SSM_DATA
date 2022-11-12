@@ -407,6 +407,7 @@ public class SSMDataProcessor extends AppCompatActivity {
 
     String getTargetSDK(){
         int version = 0;
+        String app_username="";
         PackageManager pm = getPackageManager();
         ApplicationInfo applicationInfo = null;
         try {
@@ -414,12 +415,13 @@ public class SSMDataProcessor extends AppCompatActivity {
         } catch (PackageManager.NameNotFoundException e) {}
         if (applicationInfo != null) {
             version = applicationInfo.targetSdkVersion;
+            app_username = AndroidFileSysInfo.getNameForId( applicationInfo.uid );
         }
-        return  "TARGET API:"+version;
+        return  "TARGET_API:"+version+" APP_USER:"+app_username;
     }
 
     String getAndroidAPI(){
-        String _sb_who =  Build.MANUFACTURER+","+ Build.MODEL+","+ Build.DISPLAY+", API:"+ android.os.Build.VERSION.SDK_INT;
+        String _sb_who =  Build.MANUFACTURER+","+ Build.MODEL+"\n"+ Build.DISPLAY+", API:"+ android.os.Build.VERSION.SDK_INT;
         return  _sb_who;
     }
 }
