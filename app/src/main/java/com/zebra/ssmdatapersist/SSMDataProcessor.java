@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,6 +23,12 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.nio.charset.Charset;
 import java.util.Random;
 import java.util.UUID;
 
@@ -314,6 +321,76 @@ public class SSMDataProcessor extends AppCompatActivity {
         totalTimesec = (1. * timeEnd - 1. * timeBegin) / 1000.0;
         resultView.setText("Deleted: "+ (rc_np+rc_ip+recno)+" records");
 
+
+    }
+
+    public void onClickWriteSDCARD(View view){
+        writeToFileTask("/storage/emulated/0/Download/nesd.txt");
+    }
+
+    public void onClickWriteENTERPRISE(View view){
+        writeToFileTask("/enterprise/usr/persist/nesd.txt");
+    }
+
+    Object a = new Object();
+
+    void writeToFileTask(String fspath) {
+        new Thread(() -> {
+            synchronized (a){
+                if(seedSpinner.getSelectedItem().toString().equals("Random")){
+                    seed = System.currentTimeMillis();
+                }
+                Random randomNum = new Random( seed );
+                timeBegin= System.currentTimeMillis();
+                try {
+                    FileOutputStream fos = new FileOutputStream(new File(fspath), false);
+                    for (int i = 0; i < howManyRecords; i++) {
+                        String _keyval = "{"+randomNum.nextLong()+";"+UUID.randomUUID()+"}\n";
+                        fos.write(   _keyval.getBytes(Charset.forName("UTF-8"))  );
+                        // fos.flush();
+                    }
+                    fos.close();
+                    Runtime.getRuntime().exec("chmod 666 " + fspath); //cdmod working on A11 /enterprise/usr/persist!
+
+                    long timeEnd = System.currentTimeMillis();
+                    totalTimesec = (1. * timeEnd - 1. * timeBegin) / 1000.0;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            int fsrows = FILESYS_countFileRows(fspath);
+                            resultView.setText("FILE WRITE TO "+fspath+"\nRows:"+ fsrows+" Time:"+totalTimesec+"s.");
+                        }
+                    });
+                    a.notifyAll();
+                } catch (Exception xx) {
+                    xx.printStackTrace();
+                    totalTimesec = 9999999;
+
+                    a.notifyAll();
+                }
+
+                try {
+                    a.wait();
+
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        } //synchro
+        ).start();
+    }
+
+    int FILESYS_countFileRows(String INPUT_FILE_NAME){
+        int noOfLines=-1;
+        try (LineNumberReader reader = new LineNumberReader(new FileReader(INPUT_FILE_NAME))) {
+            reader.skip(Integer.MAX_VALUE);
+            noOfLines = reader.getLineNumber() ;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return noOfLines;
     }
 
     @Override
