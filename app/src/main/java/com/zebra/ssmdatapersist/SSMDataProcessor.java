@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.ContentProviderClient;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.ContentObserver;
@@ -12,6 +13,7 @@ import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
@@ -23,12 +25,17 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Random;
 import java.util.UUID;
 
@@ -83,7 +90,7 @@ public class SSMDataProcessor extends AppCompatActivity {
         myContentObserver = new LocalContentObserver(null);
         myDataSetObserver = new LocalDataSetObserver();
 
-        resultView.setText("SSM contains "+ ssm_notpersisted_countRecords()+ " not persisted records\nand "+ssm_ispersisted_countRecords()+" persisted records from this app\n"+getAndroidAPI()+"\n"+getTargetSDK());
+        resultView.setText("SSM contains "+ ssm_notpersisted_countRecords()+ " not persisted records\nand "+ssm_ispersisted_countRecords()+" persisted records from this app\n"+getAndroidAPI()+"\n"+getTargetSDK()+"\nisExternalStorageManager:"+ Environment.isExternalStorageManager());
     }
 
     private void initializePersistFlagSpinner() {
@@ -326,11 +333,48 @@ public class SSMDataProcessor extends AppCompatActivity {
 
     public void onClickWriteSDCARD(View view){
         writeToFileTask("/storage/emulated/0/Download/nesd.txt");
+        writeToFileTask("/sdcard/Download/moon.txt");
+        writeToFileTask("/sdcard/sdc.txt");
+        writeToFileTask("/sdcard/ndzl/mars.txt"); //folder ndzl created via adb
+        writeToFileTask("/sdcard/Documents/doc.txt");
     }
 
     public void onClickWriteENTERPRISE(View view){
         writeToFileTask("/enterprise/usr/persist/nesd.txt");
     }
+
+    public void onClickManageExternalStorage(View view){
+            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+            Uri uri = Uri.fromParts("package", getPackageName(), null);
+            intent.setData(uri);
+            startActivity(intent);
+    }
+
+
+    public void onClickReadTest(View view){
+        int ndzlLines = 0;
+        int downloadLines=0;
+        BufferedReader br;
+        try {
+            br = new BufferedReader(new InputStreamReader(new FileInputStream("/sdcard/ndzl/NOTICE.txt"),"utf-8"));
+            ndzlLines = br.readLine().length();
+            br.close();
+
+            br = new BufferedReader(new InputStreamReader(new FileInputStream("/sdcard/Download/moon.txt"),"utf-8"));
+            downloadLines = br.readLine().length();
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("1st line len in /sdcard/ndzl/NOTICE.txt:"+ndzlLines);
+        sb.append("\n1st line len in /sdcard/Download/moon.txt:"+downloadLines);
+
+        resultView.setText(sb.toString());
+    }
+
+
 
     Object a = new Object();
 
@@ -417,7 +461,7 @@ public class SSMDataProcessor extends AppCompatActivity {
             version = applicationInfo.targetSdkVersion;
             app_username = AndroidFileSysInfo.getNameForId( applicationInfo.uid );
         }
-        return  "TARGET_API:"+version+" APP_USER:"+app_username;
+        return  "APP_TARGET_API:"+version+" APP_USER:"+app_username;
     }
 
     String getAndroidAPI(){
