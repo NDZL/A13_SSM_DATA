@@ -333,14 +333,14 @@ public class SSMDataProcessor extends AppCompatActivity {
 
     public void onClickWriteSDCARD(View view){
         writeToFileTask("/storage/emulated/0/Download/nesd.txt");
-        writeToFileTask("/sdcard/Download/moon.txt");
+        writeToFileTask("/sdcard/Download/moon.xml");
         writeToFileTask("/sdcard/sdc.txt");
-        writeToFileTask("/sdcard/ndzl/mars.txt"); //folder ndzl created via adb
+        writeToFileTask("/sdcard/personal/mars.txt"); //folder personal created via adb
         writeToFileTask("/sdcard/Documents/doc.txt");
     }
 
     public void onClickWriteENTERPRISE(View view){
-        writeToFileTask("/enterprise/usr/persist/nesd.txt");
+        writeToFileTask("/enterprise/usr/persist/enterprise.txt");
     }
 
     public void onClickManageExternalStorage(View view){
@@ -352,24 +352,63 @@ public class SSMDataProcessor extends AppCompatActivity {
 
 
     public void onClickReadTest(View view){
-        int ndzlLines = 0;
-        int downloadLines=0;
+        String personalLines = "";
+        String sdcardLines = "";
+        String downloadLines="";
+        String enterpriseLines="";
+        String androidDataAppLines="";
         BufferedReader br;
         try {
-            br = new BufferedReader(new InputStreamReader(new FileInputStream("/sdcard/ndzl/NOTICE.txt"),"utf-8"));
-            ndzlLines = br.readLine().length();
-            br.close();
-
-            br = new BufferedReader(new InputStreamReader(new FileInputStream("/sdcard/Download/moon.txt"),"utf-8"));
-            downloadLines = br.readLine().length();
+            br = new BufferedReader(new InputStreamReader(new FileInputStream("/sdcard/personal/NOTICE.txt"),"utf-8"));
+            personalLines = ""+br.readLine().length();
             br.close();
         } catch (IOException e) {
             e.printStackTrace();
+            personalLines = e.getMessage();
+        }
+
+        try {
+            br = new BufferedReader(new InputStreamReader(new FileInputStream("/sdcard/sdc.txt"),"utf-8"));
+            sdcardLines = ""+br.readLine().length();
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            sdcardLines = e.getMessage();
+        }
+
+        try{
+            br = new BufferedReader(new InputStreamReader(new FileInputStream("/sdcard/Download/moon.xml"),"utf-8"));
+            downloadLines = ""+br.readLine().length();
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            downloadLines= e.getMessage();
+        }
+
+        try{
+            br = new BufferedReader(new InputStreamReader(new FileInputStream("/sdcard/Android/data/com.zebra.ssmdatapersist/NOTICE.txt"),"utf-8"));
+            androidDataAppLines = ""+br.readLine().length();
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            androidDataAppLines= e.getMessage();
+        }
+
+        try{
+            br = new BufferedReader(new InputStreamReader(new FileInputStream("/enterprise/usr/persist/enterprise.txt"),"utf-8"));
+            enterpriseLines = ""+br.readLine().length();
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            enterpriseLines= e.getMessage();
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append("1st line len in /sdcard/ndzl/NOTICE.txt:"+ndzlLines);
-        sb.append("\n1st line len in /sdcard/Download/moon.txt:"+downloadLines);
+        sb.append("1st line len in /sdcard/personal/NOTICE.txt:"+personalLines);
+        sb.append("\n1st line len in /sdcard/sdc.txt:"+sdcardLines);
+        sb.append("\n1st line len in /sdcard/Download/moon.xml:"+downloadLines);
+        sb.append("\n1st line len in /sdcard/Android/data/com.zebra.ssmdatapersist/NOTICE.txt:"+androidDataAppLines);
+        sb.append("\n1st line len in /enterprise/usr/persist/enterprise.txt:"+enterpriseLines);
 
         resultView.setText(sb.toString());
     }
@@ -402,13 +441,22 @@ public class SSMDataProcessor extends AppCompatActivity {
                         @Override
                         public void run() {
                             int fsrows = FILESYS_countFileRows(fspath);
-                            resultView.setText("FILE WRITE TO "+fspath+"\nRows:"+ fsrows+" Time:"+totalTimesec+"s.");
+                            String txt = resultView.getText().toString() + "\nWRITE TO "+fspath+" Rows:"+ fsrows+" Time:"+totalTimesec+"s.";
+                            resultView.setText( txt );
                         }
                     });
                     a.notifyAll();
                 } catch (Exception xx) {
                     xx.printStackTrace();
                     totalTimesec = 9999999;
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            String txt = resultView.getText().toString() + "\nEXCP "+xx.getMessage();
+                            resultView.setText( txt );
+                        }
+                    });
 
                     a.notifyAll();
                 }
