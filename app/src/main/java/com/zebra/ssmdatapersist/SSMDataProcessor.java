@@ -34,8 +34,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.nio.charset.Charset;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Random;
 import java.util.UUID;
 
@@ -68,10 +66,8 @@ public class SSMDataProcessor extends AppCompatActivity {
     Context mContext = null;
 
     // NDZL DEBUG SIGNATURE ON AS-DELL
-    private final String signature = "MIIC5DCCAcwCAQEwDQYJKoZIhvcNAQEFBQAwNzEWMBQGA1UEAwwNQW5kcm9pZCBEZWJ1ZzEQMA4GA1UECgwHQW5kcm9pZDELMAkGA1UEBhMCVVMwIBcNMjIxMDEyMDk1NjM5WhgPMjA1MjEwMDQwOTU2MzlaMDcxFjAUBgNVBAMMDUFuZHJvaWQgRGVidWcxEDAOBgNVBAoMB0FuZHJvaWQxCzAJBgNVBAYTAlVTMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAha0WrWTMN8Yh40qZ9dX9f2FvyWwpdX8T0L8khTCs6bydqbKVSQOoe28g2y9uA5lbhor4nRstJwVY39TKC6v3ESQHIw2ESxoxU6oMVyqxKlOw48mW3fBGVH8A220Zm0Yo4ibmH4E61ahg5sbdxq2cfoizxCfDuRE7+78/kn/na6CdTH9vBlJ8MJpv587jsV78OI7+vT7bnd7PRmx8D3vxsEfdw0BzPA/C+hovy3y2jMFUe36wXZEn4hdIxqAIngeemFabEyAj5ViSvX6LcPdgUmlcrTyapz0QkjpJHrvOkBXwtwCntAESvVIJHkYnZHgMLSXml6MLlklybQGzGOrPRQIDAQABMA0GCSqGSIb3DQEBBQUAA4IBAQAE80M6+8TrJW/74A1DFkdE21ZetggUc47WG1U5R5HBw+6BLdHy/MZtyN1H9eL3TIICPuL4QXR6BCEp/iWzRwjukopwmwFhzCo2IgKmQpidkaFSdLutETwtp04L3PaXjbVxeGkhMVkYDjtbB6xbZx/ioShQ+bKvbmNOQxNdktyCvcx7s8BhzWtcPPmzYSFt0DEk2n4br2yWf9VUQBKgbjJpo/yoKWrCbb4Wu/WtHGOXGNy2r0FLkiocWHL7liGtAN+rpo0wRZtPoPYxxikqUY+ZOu4rXDu1WeLgbrpJjT84PKO/BJ8zfTD0F2nGZZaz3HjBikEjXxsoziZ/axBdfhmJ";
-
-
-    static double totalTimesec=0;
+    private final String signatureThisApp =      "MIIC5DCCAcwCAQEwDQYJKoZIhvcNAQEFBQAwNzEWMBQGA1UEAwwNQW5kcm9pZCBEZWJ1ZzEQMA4GA1UECgwHQW5kcm9pZDELMAkGA1UEBhMCVVMwIBcNMjIxMDEyMDk1NjM5WhgPMjA1MjEwMDQwOTU2MzlaMDcxFjAUBgNVBAMMDUFuZHJvaWQgRGVidWcxEDAOBgNVBAoMB0FuZHJvaWQxCzAJBgNVBAYTAlVTMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAha0WrWTMN8Yh40qZ9dX9f2FvyWwpdX8T0L8khTCs6bydqbKVSQOoe28g2y9uA5lbhor4nRstJwVY39TKC6v3ESQHIw2ESxoxU6oMVyqxKlOw48mW3fBGVH8A220Zm0Yo4ibmH4E61ahg5sbdxq2cfoizxCfDuRE7+78/kn/na6CdTH9vBlJ8MJpv587jsV78OI7+vT7bnd7PRmx8D3vxsEfdw0BzPA/C+hovy3y2jMFUe36wXZEn4hdIxqAIngeemFabEyAj5ViSvX6LcPdgUmlcrTyapz0QkjpJHrvOkBXwtwCntAESvVIJHkYnZHgMLSXml6MLlklybQGzGOrPRQIDAQABMA0GCSqGSIb3DQEBBQUAA4IBAQAE80M6+8TrJW/74A1DFkdE21ZetggUc47WG1U5R5HBw+6BLdHy/MZtyN1H9eL3TIICPuL4QXR6BCEp/iWzRwjukopwmwFhzCo2IgKmQpidkaFSdLutETwtp04L3PaXjbVxeGkhMVkYDjtbB6xbZx/ioShQ+bKvbmNOQxNdktyCvcx7s8BhzWtcPPmzYSFt0DEk2n4br2yWf9VUQBKgbjJpo/yoKWrCbb4Wu/WtHGOXGNy2r0FLkiocWHL7liGtAN+rpo0wRZtPoPYxxikqUY+ZOu4rXDu1WeLgbrpJjT84PKO/BJ8zfTD0F2nGZZaz3HjBikEjXxsoziZ/axBdfhmJ";
+    private final String signatureCompanionApp = "MIIC5DCCAcwCAQEwDQYJKoZIhvcNAQEFBQAwNzEWMBQGA1UEAwwNQW5kcm9pZCBEZWJ1ZzEQMA4GA1UECgwHQW5kcm9pZDELMAkGA1UEBhMCVVMwIBcNMjIxMDEyMDk1NjM5WhgPMjA1MjEwMDQwOTU2MzlaMDcxFjAUBgNVBAMMDUFuZHJvaWQgRGVidWcxEDAOBgNVBAoMB0FuZHJvaWQxCzAJBgNVBAYTAlVTMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAha0WrWTMN8Yh40qZ9dX9f2FvyWwpdX8T0L8khTCs6bydqbKVSQOoe28g2y9uA5lbhor4nRstJwVY39TKC6v3ESQHIw2ESxoxU6oMVyqxKlOw48mW3fBGVH8A220Zm0Yo4ibmH4E61ahg5sbdxq2cfoizxCfDuRE7+78/kn/na6CdTH9vBlJ8MJpv587jsV78OI7+vT7bnd7PRmx8D3vxsEfdw0BzPA/C+hovy3y2jMFUe36wXZEn4hdIxqAIngeemFabEyAj5ViSvX6LcPdgUmlcrTyapz0QkjpJHrvOkBXwtwCntAESvVIJHkYnZHgMLSXml6MLlklybQGzGOrPRQIDAQABMA0GCSqGSIb3DQEBBQUAA4IBAQAE80M6+8TrJW/74A1DFkdE21ZetggUc47WG1U5R5HBw+6BLdHy/MZtyN1H9eL3TIICPuL4QXR6BCEp/iWzRwjukopwmwFhzCo2IgKmQpidkaFSdLutETwtp04L3PaXjbVxeGkhMVkYDjtbB6xbZx/ioShQ+bKvbmNOQxNdktyCvcx7s8BhzWtcPPmzYSFt0DEk2n4br2yWf9VUQBKgbjJpo/yoKWrCbb4Wu/WtHGOXGNy2r0FLkiocWHL7liGtAN+rpo0wRZtPoPYxxikqUY+ZOu4rXDu1WeLgbrpJjT84PKO/BJ8zfTD0F2nGZZaz3HjBikEjXxsoziZ/axBdfhmJ";
     TextView resultView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,9 +84,13 @@ public class SSMDataProcessor extends AppCompatActivity {
         cpClient = getContentResolver().acquireContentProviderClient(cpUri);
 
         myContentObserver = new LocalContentObserver(null);
-        myDataSetObserver = new LocalDataSetObserver();
 
-        resultView.setText("SSM contains "+ ssm_notpersisted_countRecords()+ " not persisted records\nand "+ssm_ispersisted_countRecords()+" persisted records from this app\n"+getAndroidAPI()+"\n"+getTargetSDK()+"\nisExternalStorageManager:"+ Environment.isExternalStorageManager());
+        /*
+        if(Build.VERSION.SDK_INT <30 )
+            resultView.setText("SSM contains "+ ssm_notpersisted_countRecords()+ " not persisted records\nand "+ssm_ispersisted_countRecords()+" persisted records from this app\n"+getAndroidAPI()+"\n"+getTargetSDK());
+        else
+         */
+            resultView.setText("SSM contains "+ ssm_notpersisted_countRecords()+ " not persisted records\nand "+ssm_ispersisted_countRecords()+" persisted records from this app\n"+getAndroidAPI()+"\n"+getTargetSDK()+"\nisExternalStorageManager:"+ Environment.isExternalStorageManager());
     }
 
     private void initializePersistFlagSpinner() {
@@ -162,7 +162,6 @@ public class SSMDataProcessor extends AppCompatActivity {
     }
 
 
-    long timeBegin=0;
     private void ssm_insertMassiveData() {
         String key = "";
         String val = "";
@@ -176,20 +175,20 @@ public class SSMDataProcessor extends AppCompatActivity {
 
         int insert_success_count=0;
         int insert_error_count=0;
-        timeBegin= System.currentTimeMillis();
+        long timeBegin= System.currentTimeMillis();
         for(int idx = 0; idx<howManyRecords; idx++){
             key = ""+rand.nextLong();
             val = UUID.randomUUID().toString();
             String mustPersist=persisFlagSpinner.getSelectedItem().toString();
 
-            values.put(COLUMN_TARGET_APP_PACKAGE, "{\"pkgs_sigs\":[{\"pkg\":\""+ mContext.getPackageName() +"\",\"sig\":\"" + signature + "\"}]}");
+            values.put(COLUMN_TARGET_APP_PACKAGE, "{\"pkgs_sigs\":[{\"pkg\":\""+ mContext.getPackageName() +"\",\"sig\":\"" + signatureThisApp + "\"}]}" + ","+"{\"pkgs_sigs\":[{\"pkg\":\""+ mContext.getPackageName() +"\",\"sig\":\"" + signatureCompanionApp + "\"}]}");
             values.put(COLUMN_DATA_NAME, key);
             values.put(COLUMN_DATA_VALUE, val);
             values.put(COLUMN_DATA_TYPE,"1");
             values.put(COLUMN_DATA_INPUT_FORM, "1");
             values.put(COLUMN_DATA_OUTPUT_FORM, "1");
             values.put(COLUMN_DATA_PERSIST_REQUIRED, mustPersist );
-            values.put(COLUMN_MULTI_INSTANCE_REQUIRED, "false");
+            values.put(COLUMN_MULTI_INSTANCE_REQUIRED, "true");
 
 
             Uri createdRow = null;
@@ -204,7 +203,7 @@ public class SSMDataProcessor extends AppCompatActivity {
 
         }
         long timeEnd = System.currentTimeMillis();
-        totalTimesec = (1. * timeEnd - 1. * timeBegin) / 1000.0;
+        final double totalTimesec = (1. * timeEnd - 1. * timeBegin) / 1000.0;
 
         //Toast.makeText(mContext, "New Record Inserted", Toast.LENGTH_SHORT).show();
         resultView.setText("Inserted:"+insert_success_count+" records. Failed to insert:"+ insert_error_count+" records in "+totalTimesec+"s\n"+  "SSM status: "+ ssm_notpersisted_countRecords() +" non-persisted records\n "+ssm_ispersisted_countRecords()+" persisted records\n"+getAndroidAPI()+"\n"+getTargetSDK());
@@ -260,8 +259,11 @@ public class SSMDataProcessor extends AppCompatActivity {
                 " AND " + COLUMN_DATA_TYPE + " = '" + "1" + "'";
 
         Cursor cursor = null;
+        myDataSetObserver = new LocalDataSetObserver();
+
         try {
             cursor = getContentResolver().query(cpUriQuery, null, selection, null, null);
+            cursor.registerDataSetObserver(myDataSetObserver);
         } catch (Exception e) {
             Log.d(TAG, "Error: " + e.getMessage());
         }
@@ -299,6 +301,7 @@ public class SSMDataProcessor extends AppCompatActivity {
                 cursor.close();
             }
         }
+        cursor.unregisterDataSetObserver(myDataSetObserver);
     }
 
 
@@ -308,6 +311,8 @@ public class SSMDataProcessor extends AppCompatActivity {
         int rc_np=0;
         int rc_ip=0;
         int recno=0;
+        long timeBegin=-1;
+
         try {
             Uri cpUriDelete = Uri.parse(AUTHORITY + "/[" + mContext.getPackageName() + "]");
 
@@ -325,7 +330,7 @@ public class SSMDataProcessor extends AppCompatActivity {
             Log.d(TAG, "Delete - error: " + e.getMessage());
         }
         long timeEnd = System.currentTimeMillis();
-        totalTimesec = (1. * timeEnd - 1. * timeBegin) / 1000.0;
+        final double totalTimesec = (1. * timeEnd - 1. * timeBegin) / 1000.0;
         resultView.setText("Deleted: "+ (rc_np+rc_ip+recno)+" records");
 
 
@@ -337,6 +342,7 @@ public class SSMDataProcessor extends AppCompatActivity {
         writeToFileTask("/sdcard/sdc.txt");
         writeToFileTask("/sdcard/personal/mars.txt"); //folder personal created via adb
         writeToFileTask("/sdcard/Documents/doc.txt");
+        writeToFileTask("/sdcard/Android/data/com.zebra.ssmdatapersist/app.xml");
     }
 
     public void onClickWriteENTERPRISE(View view){
@@ -357,15 +363,10 @@ public class SSMDataProcessor extends AppCompatActivity {
         String downloadLines="";
         String enterpriseLines="";
         String androidDataAppLines="";
+        String emulatedLines="";
+        String docsLines="";
         BufferedReader br;
-        try {
-            br = new BufferedReader(new InputStreamReader(new FileInputStream("/sdcard/personal/NOTICE.txt"),"utf-8"));
-            personalLines = ""+br.readLine().length();
-            br.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            personalLines = e.getMessage();
-        }
+
 
         try {
             br = new BufferedReader(new InputStreamReader(new FileInputStream("/sdcard/sdc.txt"),"utf-8"));
@@ -374,6 +375,15 @@ public class SSMDataProcessor extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
             sdcardLines = e.getMessage();
+        }
+
+        try {
+            br = new BufferedReader(new InputStreamReader(new FileInputStream("/sdcard/personal/mars.txt"),"utf-8"));
+            personalLines = ""+br.readLine().length();
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            personalLines = e.getMessage();
         }
 
         try{
@@ -386,7 +396,25 @@ public class SSMDataProcessor extends AppCompatActivity {
         }
 
         try{
-            br = new BufferedReader(new InputStreamReader(new FileInputStream("/sdcard/Android/data/com.zebra.ssmdatapersist/NOTICE.txt"),"utf-8"));
+            br = new BufferedReader(new InputStreamReader(new FileInputStream("/storage/emulated/0/Download/nesd.txt"),"utf-8"));
+            emulatedLines = ""+br.readLine().length();
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            emulatedLines= e.getMessage();
+        }
+
+        try{
+            br = new BufferedReader(new InputStreamReader(new FileInputStream("/sdcard/Documents/doc.txt"),"utf-8"));
+            docsLines = ""+br.readLine().length();
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            docsLines= e.getMessage();
+        }
+
+        try{
+            br = new BufferedReader(new InputStreamReader(new FileInputStream("/sdcard/Android/data/com.zebra.ssmdatapersist/app.xml"),"utf-8"));
             androidDataAppLines = ""+br.readLine().length();
             br.close();
         } catch (IOException e) {
@@ -403,12 +431,96 @@ public class SSMDataProcessor extends AppCompatActivity {
             enterpriseLines= e.getMessage();
         }
 
+        ///////////////////////////////////////////////////////////
+        //ADB TEST
+        String adb_personalLines = "";
+        String adb_sdcardLines = "";
+        String adb_downloadLines="";
+        String adb_enterpriseLines="";
+        String adb_androidDataAppLines="";
+        String adb_emulatedLines="";
+        String adb_docsLines="";
+        try {
+            br = new BufferedReader(new InputStreamReader(new FileInputStream("/sdcard/ADBNOTICE.txt"),"utf-8"));
+            adb_sdcardLines = ""+br.readLine().length();
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            adb_sdcardLines = e.getMessage();
+        }
+
+        try {
+            br = new BufferedReader(new InputStreamReader(new FileInputStream("/sdcard/personal/ADBNOTICE.txt"),"utf-8"));
+            adb_personalLines = ""+br.readLine().length();
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            adb_personalLines = e.getMessage();
+        }
+
+        try{
+            br = new BufferedReader(new InputStreamReader(new FileInputStream("/sdcard/Download/ADBNOTICE.txt"),"utf-8"));
+            adb_downloadLines = ""+br.readLine().length();
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            adb_downloadLines= e.getMessage();
+        }
+
+        try{
+            br = new BufferedReader(new InputStreamReader(new FileInputStream("/storage/emulated/0/Download/ADBNOTICE.txt"),"utf-8"));
+            adb_emulatedLines = ""+br.readLine().length();
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            adb_emulatedLines= e.getMessage();
+        }
+
+        try{
+            br = new BufferedReader(new InputStreamReader(new FileInputStream("/sdcard/Documents/ADBNOTICE.txt"),"utf-8"));
+            adb_docsLines = ""+br.readLine().length();
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            adb_docsLines= e.getMessage();
+        }
+
+        try{
+            br = new BufferedReader(new InputStreamReader(new FileInputStream("/sdcard/Android/data/com.zebra.ssmdatapersist/ADBNOTICE.txt"),"utf-8"));
+            adb_androidDataAppLines = ""+br.readLine().length();
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            adb_androidDataAppLines= e.getMessage();
+        }
+
+        try{
+            br = new BufferedReader(new InputStreamReader(new FileInputStream("/enterprise/usr/persist/ADBNOTICE.txt"),"utf-8"));
+            adb_enterpriseLines = ""+br.readLine().length();
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            adb_enterpriseLines= e.getMessage();
+        }
+
+        ///////////////////////////////////////////////////////////
         StringBuilder sb = new StringBuilder();
-        sb.append("1st line len in /sdcard/personal/NOTICE.txt:"+personalLines);
-        sb.append("\n1st line len in /sdcard/sdc.txt:"+sdcardLines);
+        sb.append("1st line len in /sdcard/sdc.txt:"+sdcardLines);
+        sb.append("\n1st line len in /sdcard/personal/mars.txt:"+personalLines);
         sb.append("\n1st line len in /sdcard/Download/moon.xml:"+downloadLines);
-        sb.append("\n1st line len in /sdcard/Android/data/com.zebra.ssmdatapersist/NOTICE.txt:"+androidDataAppLines);
+        sb.append("\n1st line len in /storage/emulated/0/Download/nesd.txt:"+emulatedLines);
+        sb.append("\n1st line len in /sdcard/Documents/doc.txt:"+docsLines);
+        sb.append("\n1st line len in /sdcard/Android/data/com.zebra.ssmdatapersist/app.xml:"+androidDataAppLines);
         sb.append("\n1st line len in /enterprise/usr/persist/enterprise.txt:"+enterpriseLines);
+
+        sb.append("\n\n---adb section---\n");
+        sb.append("1st line len in /sdcard/ADBNOTICE.txt:"+adb_sdcardLines);
+        sb.append("\n1st line len in /sdcard/personal/ADBNOTICE.txt:"+adb_personalLines);
+        sb.append("\n1st line len in /sdcard/Download/ADBNOTICE.txt:"+adb_downloadLines);
+        sb.append("\n1st line len in /storage/emulated/0/Download/ADBNOTICE.txt:"+adb_emulatedLines);
+        sb.append("\n1st line len in /sdcard/Documents/ADBNOTICE.txt:"+adb_docsLines);
+        sb.append("\n1st line len in /sdcard/Android/data/com.zebra.ssmdatapersist/ADBNOTICE.txt"+adb_androidDataAppLines);
+        sb.append("\n1st line len in /enterprise/usr/persist/ADBNOTICE.txt:"+adb_enterpriseLines);
 
         resultView.setText(sb.toString());
     }
@@ -419,6 +531,8 @@ public class SSMDataProcessor extends AppCompatActivity {
 
     void writeToFileTask(String fspath) {
         new Thread(() -> {
+            StringBuilder sb = new StringBuilder();
+            long timeBegin=0;
             synchronized (a){
                 if(seedSpinner.getSelectedItem().toString().equals("Random")){
                     seed = System.currentTimeMillis();
@@ -436,7 +550,7 @@ public class SSMDataProcessor extends AppCompatActivity {
                     Runtime.getRuntime().exec("chmod 666 " + fspath); //cdmod working on A11 /enterprise/usr/persist!
 
                     long timeEnd = System.currentTimeMillis();
-                    totalTimesec = (1. * timeEnd - 1. * timeBegin) / 1000.0;
+                    final double totalTimesec = (1. * timeEnd - 1. * timeBegin) / 1000.0;
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -448,7 +562,6 @@ public class SSMDataProcessor extends AppCompatActivity {
                     a.notifyAll();
                 } catch (Exception xx) {
                     xx.printStackTrace();
-                    totalTimesec = 9999999;
 
                     runOnUiThread(new Runnable() {
                         @Override
@@ -531,7 +644,7 @@ class LocalContentObserver extends ContentObserver {
     }
 
     @Override
-    public void onChange(boolean selfChange, Uri uri) {
+    public void onChange(boolean selfChange, Uri uri) { //called on insert/delete etc.
         Log.d(SSMDataProcessor.TAG, "### received notification from uri: " + uri.toString());
     }
 }
@@ -542,7 +655,7 @@ class LocalDataSetObserver extends DataSetObserver {
     }
 
     @Override
-    public void onInvalidated() {
+    public void onInvalidated() { //linked to cursors lifecycle - see the update api implementation
         super.onInvalidated();
         Log.d(SSMDataProcessor.TAG, "onInvalidate");
     }
