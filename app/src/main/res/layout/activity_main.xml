@@ -155,7 +155,7 @@
                 android:layout_weight="1"
                 android:backgroundTint="#FF0000"
                 android:onClick="onClickManageExternalStorage"
-                android:text="EXTERNAL STORE" />
+                android:text="MES" />
 
             <Button
                 android:id="@+id/btn_ReadTest"

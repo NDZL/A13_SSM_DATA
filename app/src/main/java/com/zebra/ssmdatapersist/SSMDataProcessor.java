@@ -181,7 +181,11 @@ public class SSMDataProcessor extends AppCompatActivity {
             val = UUID.randomUUID().toString();
             String mustPersist=persisFlagSpinner.getSelectedItem().toString();
 
-            values.put(COLUMN_TARGET_APP_PACKAGE, "{\"pkgs_sigs\":[{\"pkg\":\""+ mContext.getPackageName() +"\",\"sig\":\"" + signatureThisApp + "\"}]}" + ","+"{\"pkgs_sigs\":[{\"pkg\":\""+ mContext.getPackageName() +"\",\"sig\":\"" + signatureCompanionApp + "\"}]}");
+            String thisAppPackageSig = "{\"pkg\":\""+ mContext.getPackageName() +"\",\"sig\":\"" + signatureThisApp + "\"}";
+            String companionAppPackageSig = "{\"pkg\":\""+ "com.ndzl.sst_companionapp" +"\",\"sig\":\"" + signatureCompanionApp + "\"}";
+            String targetElevatorAppPackageSig = "{\"pkg\":\""+ "com.ndzl.targetelevator" +"\",\"sig\":\"" + signatureCompanionApp + "\"}";
+            String allPackagesSigs = "{\"pkgs_sigs\":["+ thisAppPackageSig  + ","+ companionAppPackageSig + ","+ targetElevatorAppPackageSig   + "]}" ;
+            values.put(COLUMN_TARGET_APP_PACKAGE, allPackagesSigs);
             values.put(COLUMN_DATA_NAME, key);
             values.put(COLUMN_DATA_VALUE, val);
             values.put(COLUMN_DATA_TYPE,"1");
@@ -194,14 +198,19 @@ public class SSMDataProcessor extends AppCompatActivity {
             Uri createdRow = null;
             try {
                 createdRow = getContentResolver().insert(cpUri, values);
+
+                /* To notify the observer */
+
                 insert_success_count++;
-                Log.d(TAG, "Row Created : " + createdRow.toString());
+                Log.d(TAG, "ssm_insertMassiveData Row Created : " + createdRow.toString()+ "\ncpURI="+cpUri);
             } catch (Exception e) {
                 insert_error_count++;
                 Log.d(TAG, "Row Create Excp : " + e.getMessage());
             }
 
         }
+        this.getContentResolver().notifyChange(cpUri, null);
+
         long timeEnd = System.currentTimeMillis();
         final double totalTimesec = (1. * timeEnd - 1. * timeBegin) / 1000.0;
 
@@ -228,6 +237,7 @@ public class SSMDataProcessor extends AppCompatActivity {
             }
         }
 
+        Log.d(TAG, "ssm_notpersisted_countRecords / URI="+cpUriQuery);
         return _count;
     }
 
@@ -342,7 +352,7 @@ public class SSMDataProcessor extends AppCompatActivity {
         writeToFileTask("/sdcard/sdc.txt");
         writeToFileTask("/sdcard/personal/mars.txt"); //folder personal created via adb
         writeToFileTask("/sdcard/Documents/doc.txt");
-        writeToFileTask("/sdcard/Android/data/com.zebra.ssmdatapersist/app.xml");
+        writeToFileTask("/sdcard/Android/data/com.zebra.ssmdatapersist/files/app.xml");
     }
 
     public void onClickWriteENTERPRISE(View view){
@@ -414,7 +424,7 @@ public class SSMDataProcessor extends AppCompatActivity {
         }
 
         try{
-            br = new BufferedReader(new InputStreamReader(new FileInputStream("/sdcard/Android/data/com.zebra.ssmdatapersist/app.xml"),"utf-8"));
+            br = new BufferedReader(new InputStreamReader(new FileInputStream("/sdcard/Android/data/com.zebra.ssmdatapersist/files/app.xml"),"utf-8"));
             androidDataAppLines = ""+br.readLine().length();
             br.close();
         } catch (IOException e) {
@@ -510,7 +520,7 @@ public class SSMDataProcessor extends AppCompatActivity {
         sb.append("\n1st line len in /sdcard/Download/moon.xml:"+downloadLines);
         sb.append("\n1st line len in /storage/emulated/0/Download/nesd.txt:"+emulatedLines);
         sb.append("\n1st line len in /sdcard/Documents/doc.txt:"+docsLines);
-        sb.append("\n1st line len in /sdcard/Android/data/com.zebra.ssmdatapersist/app.xml:"+androidDataAppLines);
+        sb.append("\n1st line len in /sdcard/Android/data/com.zebra.ssmdatapersist/files/app.xml:"+androidDataAppLines);
         sb.append("\n1st line len in /enterprise/usr/persist/enterprise.txt:"+enterpriseLines);
 
         sb.append("\n\n---adb section---\n");
@@ -601,6 +611,8 @@ public class SSMDataProcessor extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        //no Observer on SSM-Data is documented!!
         getContentResolver().registerContentObserver(cpUri, true, myContentObserver);
     }
 
@@ -647,6 +659,12 @@ class LocalContentObserver extends ContentObserver {
     public void onChange(boolean selfChange, Uri uri) { //called on insert/delete etc.
         Log.d(SSMDataProcessor.TAG, "### received notification from uri: " + uri.toString());
     }
+
+    /* THIS APP SSMDATAPROCESSOR RECEIVED THE FOLLOWING NOTIFICATIONS WHEN INSERTING KEY-VALUE PAIRS!
+    2023-01-09 23:03:57.684 17871-17886 SSMDataProcessor        com.zebra.ssmdatapersist             D  ### received notification from uri: content://com.zebra.securestoragemanager.securecontentprovider/data/[com.zebra.ssmdatapersist]/20
+    2023-01-09 23:03:57.693 17871-18068 SSMDataProcessor        com.zebra.ssmdatapersist             D  ### received notification from uri: content://com.zebra.securestoragemanager.securecontentprovider/data/[com.ndzl.sst_companionapp]/130
+
+    * */
 }
 
 class LocalDataSetObserver extends DataSetObserver {
