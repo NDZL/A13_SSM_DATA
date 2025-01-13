@@ -45,7 +45,7 @@ public class SSMDataProcessor extends AppCompatActivity {
     ContentProviderClient cpClient;
     private final String AUTHORITY = "content://com.zebra.securestoragemanager.securecontentprovider/data";
     static final String TAG = "SSMDataProcessor";
-    int howManyRecords=10;
+    int howManyRecords=1;
     long seed=3003;
 
     private final String COLUMN_ORIG_APP_PACKAGE = "orig_app_package";
@@ -66,8 +66,9 @@ public class SSMDataProcessor extends AppCompatActivity {
     Context mContext = null;
 
     // NDZL DEBUG SIGNATURE ON AS-DELL
-    private final String signatureThisApp =      "MIIC5DCCAcwCAQEwDQYJKoZIhvcNAQEFBQAwNzEWMBQGA1UEAwwNQW5kcm9pZCBEZWJ1ZzEQMA4GA1UECgwHQW5kcm9pZDELMAkGA1UEBhMCVVMwIBcNMjIxMDEyMDk1NjM5WhgPMjA1MjEwMDQwOTU2MzlaMDcxFjAUBgNVBAMMDUFuZHJvaWQgRGVidWcxEDAOBgNVBAoMB0FuZHJvaWQxCzAJBgNVBAYTAlVTMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAha0WrWTMN8Yh40qZ9dX9f2FvyWwpdX8T0L8khTCs6bydqbKVSQOoe28g2y9uA5lbhor4nRstJwVY39TKC6v3ESQHIw2ESxoxU6oMVyqxKlOw48mW3fBGVH8A220Zm0Yo4ibmH4E61ahg5sbdxq2cfoizxCfDuRE7+78/kn/na6CdTH9vBlJ8MJpv587jsV78OI7+vT7bnd7PRmx8D3vxsEfdw0BzPA/C+hovy3y2jMFUe36wXZEn4hdIxqAIngeemFabEyAj5ViSvX6LcPdgUmlcrTyapz0QkjpJHrvOkBXwtwCntAESvVIJHkYnZHgMLSXml6MLlklybQGzGOrPRQIDAQABMA0GCSqGSIb3DQEBBQUAA4IBAQAE80M6+8TrJW/74A1DFkdE21ZetggUc47WG1U5R5HBw+6BLdHy/MZtyN1H9eL3TIICPuL4QXR6BCEp/iWzRwjukopwmwFhzCo2IgKmQpidkaFSdLutETwtp04L3PaXjbVxeGkhMVkYDjtbB6xbZx/ioShQ+bKvbmNOQxNdktyCvcx7s8BhzWtcPPmzYSFt0DEk2n4br2yWf9VUQBKgbjJpo/yoKWrCbb4Wu/WtHGOXGNy2r0FLkiocWHL7liGtAN+rpo0wRZtPoPYxxikqUY+ZOu4rXDu1WeLgbrpJjT84PKO/BJ8zfTD0F2nGZZaz3HjBikEjXxsoziZ/axBdfhmJ";
-    private final String signatureCompanionApp = "MIIC5DCCAcwCAQEwDQYJKoZIhvcNAQEFBQAwNzEWMBQGA1UEAwwNQW5kcm9pZCBEZWJ1ZzEQMA4GA1UECgwHQW5kcm9pZDELMAkGA1UEBhMCVVMwIBcNMjIxMDEyMDk1NjM5WhgPMjA1MjEwMDQwOTU2MzlaMDcxFjAUBgNVBAMMDUFuZHJvaWQgRGVidWcxEDAOBgNVBAoMB0FuZHJvaWQxCzAJBgNVBAYTAlVTMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAha0WrWTMN8Yh40qZ9dX9f2FvyWwpdX8T0L8khTCs6bydqbKVSQOoe28g2y9uA5lbhor4nRstJwVY39TKC6v3ESQHIw2ESxoxU6oMVyqxKlOw48mW3fBGVH8A220Zm0Yo4ibmH4E61ahg5sbdxq2cfoizxCfDuRE7+78/kn/na6CdTH9vBlJ8MJpv587jsV78OI7+vT7bnd7PRmx8D3vxsEfdw0BzPA/C+hovy3y2jMFUe36wXZEn4hdIxqAIngeemFabEyAj5ViSvX6LcPdgUmlcrTyapz0QkjpJHrvOkBXwtwCntAESvVIJHkYnZHgMLSXml6MLlklybQGzGOrPRQIDAQABMA0GCSqGSIb3DQEBBQUAA4IBAQAE80M6+8TrJW/74A1DFkdE21ZetggUc47WG1U5R5HBw+6BLdHy/MZtyN1H9eL3TIICPuL4QXR6BCEp/iWzRwjukopwmwFhzCo2IgKmQpidkaFSdLutETwtp04L3PaXjbVxeGkhMVkYDjtbB6xbZx/ioShQ+bKvbmNOQxNdktyCvcx7s8BhzWtcPPmzYSFt0DEk2n4br2yWf9VUQBKgbjJpo/yoKWrCbb4Wu/WtHGOXGNy2r0FLkiocWHL7liGtAN+rpo0wRZtPoPYxxikqUY+ZOu4rXDu1WeLgbrpJjT84PKO/BJ8zfTD0F2nGZZaz3HjBikEjXxsoziZ/axBdfhmJ";
+    private final String signatureThisApp = "MIIC5DCCAcwCAQEwDQYJKoZIhvcNAQELBQAwNzEWMBQGA1UEAwwNQW5kcm9pZCBEZWJ1ZzEQMA4GA1UECgwHQW5kcm9pZDELMAkGA1UEBhMCVVMwIBcNMjQxMTIxMTM0NTEzWhgPMjA1NDExMTQxMzQ1MTNaMDcxFjAUBgNVBAMMDUFuZHJvaWQgRGVidWcxEDAOBgNVBAoMB0FuZHJvaWQxCzAJBgNVBAYTAlVTMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1/oAecfxmGGM+CLO21TUXuuh+klZeoH0viBnfP4zW4QSOdGSme2OQsNfcVgi8pnQWLmOvU7ZWJpZgdqIAcujCv3mc9MTbqoEmc6Q2f5D87MNguq+Pv8CCUO/gEhpu1gy9yuNbNYuxHHWczXO5Ti8y3Rq2g9jO47v+sLc1M168VTQzP34+y06AN9t4nXnecjIw93VHqhJ4LElWb+dBwx4IH4ZAd3Jlb4IVBNeAf4C0CBh5G1qoDY8wK454SBc0cE68K4Cc31C8bZYl6Im3UR5pb6HOxnf7Tv5ZvJyecZ4V+jl1STheGoS6HbWRtDt6Yf34kj+PUu7Nhws5VX8DUT5sQIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQDM3Y9OanVtH71/Ua+XFOkzbv35S+yYBbqWomQUIKpUOD8g92PvBvT7xy3tymUu10pVkgPBBIXIpdAtiecZ3Fi6oLuZ05vOztaUZ5yVxjRDii9n8kwIp9n+UEVvLbNAEqm6yQrBZ9LJEEkmjYG2g/Jqk+CSbwyb5dgebqBoOBYq2jlWexyRHY7TBCfryb/v/Wok9PTemuquql29P4IK1nlYaGCgNY5Nxsyvtx3Q0QeKr3ObR9CPOSy4DE26VqhNw8cjhEud4ewmNV5BF/n34R+pG66e2Q1ZetnIl7O1RMpiku5cs4zeKhbai/Mte9cgQpvgQPZGp6eJcdaNlyJ39mn3"; //jan.2025
+
+    private final String signatureCompanionApp = "MIIC5DCCAcwCAQEwDQYJKoZIhvcNAQELBQAwNzEWMBQGA1UEAwwNQW5kcm9pZCBEZWJ1ZzEQMA4GA1UECgwHQW5kcm9pZDELMAkGA1UEBhMCVVMwIBcNMjQxMTIxMTM0NTEzWhgPMjA1NDExMTQxMzQ1MTNaMDcxFjAUBgNVBAMMDUFuZHJvaWQgRGVidWcxEDAOBgNVBAoMB0FuZHJvaWQxCzAJBgNVBAYTAlVTMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1/oAecfxmGGM+CLO21TUXuuh+klZeoH0viBnfP4zW4QSOdGSme2OQsNfcVgi8pnQWLmOvU7ZWJpZgdqIAcujCv3mc9MTbqoEmc6Q2f5D87MNguq+Pv8CCUO/gEhpu1gy9yuNbNYuxHHWczXO5Ti8y3Rq2g9jO47v+sLc1M168VTQzP34+y06AN9t4nXnecjIw93VHqhJ4LElWb+dBwx4IH4ZAd3Jlb4IVBNeAf4C0CBh5G1qoDY8wK454SBc0cE68K4Cc31C8bZYl6Im3UR5pb6HOxnf7Tv5ZvJyecZ4V+jl1STheGoS6HbWRtDt6Yf34kj+PUu7Nhws5VX8DUT5sQIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQDM3Y9OanVtH71/Ua+XFOkzbv35S+yYBbqWomQUIKpUOD8g92PvBvT7xy3tymUu10pVkgPBBIXIpdAtiecZ3Fi6oLuZ05vOztaUZ5yVxjRDii9n8kwIp9n+UEVvLbNAEqm6yQrBZ9LJEEkmjYG2g/Jqk+CSbwyb5dgebqBoOBYq2jlWexyRHY7TBCfryb/v/Wok9PTemuquql29P4IK1nlYaGCgNY5Nxsyvtx3Q0QeKr3ObR9CPOSy4DE26VqhNw8cjhEud4ewmNV5BF/n34R+pG66e2Q1ZetnIl7O1RMpiku5cs4zeKhbai/Mte9cgQpvgQPZGp6eJcdaNlyJ39mn3"; //jan.2025
     TextView resultView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,6 +154,15 @@ public class SSMDataProcessor extends AppCompatActivity {
         insertData();
     }
 
+    public void onClickInsertDETData(View view) {
+        String datetimeNowEpoch = String.valueOf(System.currentTimeMillis());
+        String detKey = "DET"+datetimeNowEpoch;
+        ssm_insertDETEncryptedData(
+                detKey/* DONT NEED TO ENCRYPT THE KEY! */,
+                "s8MhzSyEKaz4lVbe6e9FMuBvWoSzLBElJSTFAKrSPdqMO+rgA9kcQz5cEkHSFgWw2Ps1HSojeGrbUxdDPsMDpcpccbTwoFNNpewRs1iGTxkQ7ihLhF/xQQV0Nt0ZVUyy5rKkY8t9izpcIZAvfnzBYI0TLwJmMaXOD+D73ZQsk6xiSwNBa5Oh8ppKb/Fc/1GxwlkhA+Y0prq5c5kmlHBY2BtELjfjpZueWJs1xRKd9ZY/bYNWajglnhMrzUDHOH1H/S5irg8GuIsSHE78MFeKOwaRV3JcMsXVI9S9uvmyeG69PfpbMNiJGyTjWuiphVsqVDVyjED1pXDKnQuyhzBn7vpL/tQ4iElhuLrD//Rwqi39J4xFAyRktBnd+EttTBOa6T/MpcVvaNs03PuiYXD38e7Ay2Bys3QamiUHz+fMylCpy5u/YyuUDms4bRK8EL84zCLlMOtitanXS58omE4ir3G+4ZEN1WuqL//haDripZeeV51QVfznSDO6py7FZ+cdQm4KmucDo8SzsgZCITtKtwUpcZ/w5sFzLuJdEQe5En+cqzu2Uwt7A4pgna/qmUVg5R32xiR2SKmBrc00riRWyBfGfWESnmFWyM648ByDPV8IvxJfftc7Z626x2/yIW2MG62CLvzMoy8G7G++TYOVtethUrAiZvkCQcerZfmFfXiA8LIHAOQ8viG512Ptpn261NyUUVH9/HKh4FVr9YpkvziDfrwD7p3obY25+WCDWjKx9K33olSgH0Hpkn24D1w5ZsYfSvWxDlirl6PE3CsejFYgX4diEw73NMBVmicVwhFFwDB0ht25c3Kec2ND3KGYWJiZEVDyrF4NNDkP9p+KRNECT3TjS4MoF6BDlNSBz7VUN6tDdiIBtubcx7VONLSSkrhg59NHmzsMjgdJcv721d2mYaDnnEmO9Xh01WqWqK86SgrcU4okGVWITXtN96KcWGJPBk2BXnnHI/bv6GnEEh/85kCFlAVtPHSa+ORUt38AWAJLfeZnut5ouVsaj6oVO+WG0KRKwRtddnm0GjWAZUdFwTLa5vKPVqgVlgHJrW4NAqMK92qXrgRKaJEuyrmNqAr/GeKNBOgY8EzcUccTSAYz842CaZjO/YlDHuWkVIt5WDmIummjM7gcF0kAMGz4D0J/AWNS9aEEDyTUZsYO4u0/hJK+gUiZ3Zz9IAAgnODdOKPmLPPIFf224oA61WHMHT6aKzbARLY+SG0oM15hCj+/2LE9O9YK1oNiqdQlRiXxwZp0hpaa55w/bX/9sp9HcIRHjSha/k5Jl5b6buSFUn+f+Jcv71BeYlcBHdnLo0LTurLysc1Th+ZXP9rIvrLgEbD/vUZJe1Nq3JwjgDnpQ6a17SPq1S5XiGcQM72LL20c7y2ZNNdriRUqLXySSPr9xDSyOEKNMBN+sJDJxvOK6p8eQ/VvpG5RJGvWbxdNVrwECANrWPMbJWYGoi5/4uQ6llh2qvIJ/I/K0atqP5KkHVXas7DSP6iCnvs5dYLC8IT+yNYeqYb0MSafV9Yf/Lo5##rFSwrgQHHPDaEQn4UjmISWfVNYZW9vrmjGjkW9MaWdpFbiTetyrXQDSwswSGpzf49U/0kbC/TMgojyEOkZXJS4Jfv/Ziyr7hAF9ibijBSUg+OZeC+aC1pwkTGm+BuPKRrMj442JNJooPWqcHm33h2eJKEXHJ4NzrzkVowSdGe3Hc3hQf8ByMna/pSADF9Fz65nx40yUCMIj7oqL+5oUOPHBYksYbeqv5TW7W1jNQaqrGwUCRTvsHb2KJarJAoifz8g9va+dW3sfu7IEaT3+jEGR4KjBYB5IlNZ5oDIHQC/g76NS7uOdPDONBOqxZiHUkpcNjP0F+fjHl93meNYzw9w=="
+        );
+    }
+
     public void insertData() {
         try {
             ssm_insertMassiveData();
@@ -161,6 +171,56 @@ public class SSMDataProcessor extends AppCompatActivity {
         }
     }
 
+
+    private void ssm_insertDETEncryptedData(String detKey, String detVal) {
+
+
+        ContentValues values = new ContentValues();
+
+        int insert_success_count=0;
+        int insert_error_count=0;
+        long timeBegin= System.currentTimeMillis();
+        {
+
+            String mustPersist=persisFlagSpinner.getSelectedItem().toString();
+
+            String thisAppPackageSig = "{\"pkg\":\""+ mContext.getPackageName() +"\",\"sig\":\"" + signatureThisApp + "\"}";
+            String companionAppPackageSig = "{\"pkg\":\""+ "com.ndzl.sst_companionapp" +"\",\"sig\":\"" + signatureThisApp + "\"}";
+            // String targetElevatorAppPackageSig = "{\"pkg\":\""+ "com.ndzl.targetelevator" +"\",\"sig\":\"" + signatureCompanionApp + "\"}";
+            String allPackagesSigs = "{\"pkgs_sigs\":["+ /*thisAppPackageSig  + ","+*/ companionAppPackageSig   + "]}" ;
+            values.put(COLUMN_TARGET_APP_PACKAGE, allPackagesSigs);
+            values.put(COLUMN_DATA_NAME, detKey);
+            values.put(COLUMN_DATA_VALUE, detVal);
+            values.put(COLUMN_DATA_TYPE,"1");
+            values.put(COLUMN_DATA_INPUT_FORM, "2");  //2=encrypted
+            values.put(COLUMN_DATA_OUTPUT_FORM, "1"); //both 2 or both 1??
+            values.put(COLUMN_DATA_PERSIST_REQUIRED, "false" );
+            values.put(COLUMN_MULTI_INSTANCE_REQUIRED, "false");
+
+
+            Uri createdRow = null;
+            try {
+                createdRow = getContentResolver().insert(cpUri, values);
+
+
+
+                insert_success_count++;
+                Log.d(TAG, "ssm_insertMassiveData Row Created : " + createdRow.toString()+ "\ncpURI="+cpUri);
+            } catch (Exception e) {
+                insert_error_count++;
+                Log.d(TAG, "Row Create Excp : " + e.getMessage());
+            }
+
+        }
+        /* To notify the observer in the target app */
+        this.getContentResolver().notifyChange(cpUri, null);
+
+        long timeEnd = System.currentTimeMillis();
+        final double totalTimesec = (1. * timeEnd - 1. * timeBegin) / 1000.0;
+
+        //Toast.makeText(mContext, "New Record Inserted", Toast.LENGTH_SHORT).show();
+        resultView.setText("Inserted:"+insert_success_count+" records. Failed to insert:"+ insert_error_count+" records in "+totalTimesec+"s\n"+  "SSM status: "+ ssm_notpersisted_countRecords() +" non-persisted records\n "+ssm_ispersisted_countRecords()+" persisted records\n"+getAndroidAPI()+"\n"+getTargetSDK());
+    }
 
     private void ssm_insertMassiveData() {
         String key = "";
@@ -172,19 +232,20 @@ public class SSMDataProcessor extends AppCompatActivity {
             seed = System.currentTimeMillis();
         }
         Random rand = new Random( seed );
+        String datetimeNowAsString = java.time.LocalDateTime.now().toString();
 
         int insert_success_count=0;
         int insert_error_count=0;
         long timeBegin= System.currentTimeMillis();
         for(int idx = 0; idx<howManyRecords; idx++){
-            key = ""+rand.nextLong();
-            val = UUID.randomUUID().toString();
+            key = "NDZL"+rand.nextLong();
+            val = "HELLO SSM "+UUID.randomUUID().toString()+" "+datetimeNowAsString ;
             String mustPersist=persisFlagSpinner.getSelectedItem().toString();
 
             String thisAppPackageSig = "{\"pkg\":\""+ mContext.getPackageName() +"\",\"sig\":\"" + signatureThisApp + "\"}";
-            String companionAppPackageSig = "{\"pkg\":\""+ "com.ndzl.sst_companionapp" +"\",\"sig\":\"" + signatureCompanionApp + "\"}";
-            String targetElevatorAppPackageSig = "{\"pkg\":\""+ "com.ndzl.targetelevator" +"\",\"sig\":\"" + signatureCompanionApp + "\"}";
-            String allPackagesSigs = "{\"pkgs_sigs\":["+ thisAppPackageSig  + ","+ companionAppPackageSig + ","+ targetElevatorAppPackageSig   + "]}" ;
+            String companionAppPackageSig = "{\"pkg\":\""+ "com.ndzl.sst_companionapp" +"\",\"sig\":\"" + signatureThisApp + "\"}";
+           // String targetElevatorAppPackageSig = "{\"pkg\":\""+ "com.ndzl.targetelevator" +"\",\"sig\":\"" + signatureCompanionApp + "\"}";
+            String allPackagesSigs = "{\"pkgs_sigs\":["+ /*thisAppPackageSig  + ","+*/ companionAppPackageSig   + "]}" ;
             values.put(COLUMN_TARGET_APP_PACKAGE, allPackagesSigs);
             values.put(COLUMN_DATA_NAME, key);
             values.put(COLUMN_DATA_VALUE, val);
@@ -199,7 +260,7 @@ public class SSMDataProcessor extends AppCompatActivity {
             try {
                 createdRow = getContentResolver().insert(cpUri, values);
 
-                /* To notify the observer */
+
 
                 insert_success_count++;
                 Log.d(TAG, "ssm_insertMassiveData Row Created : " + createdRow.toString()+ "\ncpURI="+cpUri);
@@ -209,6 +270,7 @@ public class SSMDataProcessor extends AppCompatActivity {
             }
 
         }
+        /* To notify the observer in the target app */
         this.getContentResolver().notifyChange(cpUri, null);
 
         long timeEnd = System.currentTimeMillis();
@@ -275,7 +337,7 @@ public class SSMDataProcessor extends AppCompatActivity {
             cursor = getContentResolver().query(cpUriQuery, null, selection, null, null);
             cursor.registerDataSetObserver(myDataSetObserver);
         } catch (Exception e) {
-            Log.d(TAG, "Error: " + e.getMessage());
+            Log.d(TAG, "#NDZL cursorError register: " + e.getMessage());
         }
         try {
             if (cursor != null && cursor.moveToFirst()) {
@@ -309,9 +371,14 @@ public class SSMDataProcessor extends AppCompatActivity {
         } finally {
             if (cursor != null) {
                 cursor.close();
+                try {
+                    cursor.unregisterDataSetObserver(myDataSetObserver);
+                } catch (Exception e) {
+                    Log.d(TAG, "#NDZL cursorError unregister: " + e.getMessage());
+                }
             }
         }
-        cursor.unregisterDataSetObserver(myDataSetObserver);
+
     }
 
 

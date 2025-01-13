@@ -13,7 +13,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SSM Data Solution {NDZL} v1.0"
+            android:text="SSM Data Solution {NDZL} v1.1+DET"
             android:layout_gravity="center"
             android:textSize="14sp"
             android:padding="3dp"/>
@@ -48,6 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/seedSpinner"/>
+
 
 
         <LinearLayout
@@ -88,13 +89,14 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/btn_update"
+                android:id="@+id/btn_insertDET"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="3dp"
                 android:layout_marginRight="3dp"
                 android:layout_weight="1"
-                android:text="---" />
+                android:onClick="onClickInsertDETData"
+                android:text="DET INSERT" />
 
             <Button
                 android:id="@+id/btn_delete"
