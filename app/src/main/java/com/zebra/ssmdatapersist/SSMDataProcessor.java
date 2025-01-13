@@ -174,6 +174,9 @@ public class SSMDataProcessor extends AppCompatActivity {
 
     private void ssm_insertDETEncryptedData(String detKey, String detVal) {
 
+        //for DET documentation, look at https://techdocs.zebra.com/ssm/1-1/guide/share-data/
+        //to view DET encrypted data sent to the companionApp in the example below, please look at https://github.com/ZebraDevs/A13-Companion-App/blob/aa64b537e098bd3286203a92424ce08e4cd5dec5/app/src/main/java/com/ndzl/sst_companionapp/MainActivity.java#L346
+
 
         ContentValues values = new ContentValues();
 
@@ -184,16 +187,14 @@ public class SSMDataProcessor extends AppCompatActivity {
 
             String mustPersist=persisFlagSpinner.getSelectedItem().toString();
 
-            String thisAppPackageSig = "{\"pkg\":\""+ mContext.getPackageName() +"\",\"sig\":\"" + signatureThisApp + "\"}";
             String companionAppPackageSig = "{\"pkg\":\""+ "com.ndzl.sst_companionapp" +"\",\"sig\":\"" + signatureThisApp + "\"}";
-            // String targetElevatorAppPackageSig = "{\"pkg\":\""+ "com.ndzl.targetelevator" +"\",\"sig\":\"" + signatureCompanionApp + "\"}";
-            String allPackagesSigs = "{\"pkgs_sigs\":["+ /*thisAppPackageSig  + ","+*/ companionAppPackageSig   + "]}" ;
+            String allPackagesSigs = "{\"pkgs_sigs\":["+ companionAppPackageSig   + "]}" ;
             values.put(COLUMN_TARGET_APP_PACKAGE, allPackagesSigs);
             values.put(COLUMN_DATA_NAME, detKey);
             values.put(COLUMN_DATA_VALUE, detVal);
             values.put(COLUMN_DATA_TYPE,"1");
             values.put(COLUMN_DATA_INPUT_FORM, "2");  //2=encrypted
-            values.put(COLUMN_DATA_OUTPUT_FORM, "1"); //both 2 or both 1??
+            values.put(COLUMN_DATA_OUTPUT_FORM, "1");
             values.put(COLUMN_DATA_PERSIST_REQUIRED, "false" );
             values.put(COLUMN_MULTI_INSTANCE_REQUIRED, "false");
 
@@ -205,10 +206,10 @@ public class SSMDataProcessor extends AppCompatActivity {
 
 
                 insert_success_count++;
-                Log.d(TAG, "ssm_insertMassiveData Row Created : " + createdRow.toString()+ "\ncpURI="+cpUri);
+                Log.d(TAG, "ssm_insertDETEncryptedData Rows Created : " + createdRow.toString()+ "\ncpURI="+cpUri);
             } catch (Exception e) {
                 insert_error_count++;
-                Log.d(TAG, "Row Create Excp : " + e.getMessage());
+                Log.d(TAG, "ssm_insertDETEncryptedData Rows Created Excp : " + e.getMessage());
             }
 
         }
@@ -219,7 +220,7 @@ public class SSMDataProcessor extends AppCompatActivity {
         final double totalTimesec = (1. * timeEnd - 1. * timeBegin) / 1000.0;
 
         //Toast.makeText(mContext, "New Record Inserted", Toast.LENGTH_SHORT).show();
-        resultView.setText("Inserted:"+insert_success_count+" records. Failed to insert:"+ insert_error_count+" records in "+totalTimesec+"s\n"+  "SSM status: "+ ssm_notpersisted_countRecords() +" non-persisted records\n "+ssm_ispersisted_countRecords()+" persisted records\n"+getAndroidAPI()+"\n"+getTargetSDK());
+        resultView.setText("DET Inserted:"+insert_success_count+" records. DET Failed to insert:"+ insert_error_count+" records in "+totalTimesec+"s\n"+  "SSM status: "+ ssm_notpersisted_countRecords() +" non-persisted records\n "+ssm_ispersisted_countRecords()+" persisted records\n"+getAndroidAPI()+"\n"+getTargetSDK());
     }
 
     private void ssm_insertMassiveData() {
