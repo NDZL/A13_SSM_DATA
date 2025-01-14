@@ -5,7 +5,7 @@
 
 This sample app demonstrates how to use Secure Storage Manager (SSM) to securely share data. 
 
-- Optionally, the data can be configured to persist through an enterprise reset
+- Optionally, data can be configured to persist through an enterprise reset
 - DET pre-encrypted data sharing is also shown 
 
 Refer to Zebra TechDocs: http://techdocs.zebra.com/datawedge/latest/guide/samples/share-data/
